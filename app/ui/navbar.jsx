@@ -26,7 +26,6 @@ const items = [
 ]
 
 export default function Navbar({ session }) {
-  console.log('navbar', session)
   return (
     <header>
       <div className="container mt-5 mb-10 flex items-center justify-between">
