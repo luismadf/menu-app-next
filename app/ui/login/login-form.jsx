@@ -1,6 +1,6 @@
 'use client'
-import { useForm } from 'react-hook-form'
 
+import { useForm } from 'react-hook-form'
 import {
   Button,
   Card,
@@ -15,17 +15,12 @@ import {
 import { signIn } from 'next-auth/react'
 
 export default function LoginForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm()
+  const { register, handleSubmit } = useForm()
 
   async function onSubmit(e) {
     try {
       await signIn('credentials', e)
     } catch (error) {
-      console.log('error')
       if (error) {
         switch (error.type) {
           case 'CredentialsSignin':
