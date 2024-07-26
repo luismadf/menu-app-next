@@ -2,6 +2,7 @@
 
 import { ActionsMenu, ConfirmationModal } from '../ui'
 import { removeCategoryMutation } from '@/lib/api/categories/mutations'
+import EditCategoryForm from '../ui/categories/edit-category-form'
 
 export const columns = [
   {
@@ -18,6 +19,9 @@ export const columns = [
       return (
         <ActionsMenu
           actions={[
+            {
+              component: <EditCategoryForm category={row.original} />
+            },
             {
               component: (
                 <ConfirmationModal

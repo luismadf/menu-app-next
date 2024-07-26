@@ -21,7 +21,7 @@ export default function ActionsMenu({ actions = [] }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
         {actions.map(({ label, component }, index) => {
           if (React.isValidElement(component)) {
             return React.cloneElement(component, {

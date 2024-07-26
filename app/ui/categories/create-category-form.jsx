@@ -14,11 +14,24 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { addCategoryMutation } from '@/lib/api/categories/mutations'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+import { MultiSelect } from '..'
+import { useEffect } from 'react'
+import { getItems } from '@/lib/api/item/queries'
 
 export default function CreateCategoryForm() {
   const [open, setOpen] = useState(false)
-  const { register, handleSubmit, reset } = useForm()
+  const [items, setItems] = useState([])
+  const { control, register, handleSubmit, reset } = useForm()
+
+  useEffect(() => {
+    const getItemsValues = async () => {
+      const categories = await getItems()
+      setItems(categories)
+    }
+
+    getItemsValues()
+  }, [])
 
   function onCloseDialog() {
     setOpen(false)
@@ -64,6 +77,27 @@ export default function CreateCategoryForm() {
                 {...register('description', {
                   required: 'La descripción es obligatoria'
                 })}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Items
+              </Label>
+              <Controller
+                control={control}
+                name="items"
+                render={({ field: { onChange, value } }) => (
+                  <MultiSelect
+                    className="col-span-3"
+                    onChange={onChange}
+                    values={value}
+                    options={items}
+                    getOptions={(item) => ({
+                      label: item.name,
+                      value: item.id
+                    })}
+                  />
+                )}
               />
             </div>
             <DialogFooter>
