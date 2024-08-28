@@ -1,14 +1,13 @@
 'use client'
 
 import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle
-} from '@/components/ui/navigation-menu'
-import Link from 'next/link'
-import { Button } from '.'
+  Navbar as NextUINavbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Button
+} from '@nextui-org/react'
 
 const items = [
   {
@@ -27,40 +26,39 @@ const items = [
 
 export default function Navbar({ session }) {
   return (
-    <header>
-      <div className="container mt-5 mb-10 flex items-center justify-between">
-        <Link href="/" legacyBehavior passHref>
-          <p className="text-black font-bold text-inherit">MENU APP</p>
+    <NextUINavbar>
+      <NavbarBrand>
+        <Link href="/">
+          <p className="font-bold text-inherit">Menu App</p>
         </Link>
-        <NavigationMenu>
-          <NavigationMenuList>
-            {items.map(({ name, href }) => (
-              <NavigationMenuItem key={name}>
-                <Link href={href} legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    {name}
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-        <div className="flex gap-2">
-          {session ? (
-            <Button variant="destructive">
-              <Link href="/api/auth/signout" legacyBehavior passHref>
-                Sign Out
-              </Link>
+      </NavbarBrand>
+      <NavbarContent className="sm:flex gap-4" justify="center">
+        {items.map(({ name, href }) => (
+          <NavbarItem>
+            <Link color="foreground" href={href}>
+              {name}
+            </Link>
+          </NavbarItem>
+        ))}
+      </NavbarContent>
+      <NavbarContent justify="end">
+        {session ? (
+          <NavbarItem>
+            <Button
+              as={Link}
+              color="primary"
+              href="/api/auth/signout"
+              variant="flat"
+            >
+              Sign Out
             </Button>
-          ) : (
-            <Button variant="secondary">
-              <Link href="/auth/login" legacyBehavior passHref>
-                Login
-              </Link>
-            </Button>
-          )}
-        </div>
-      </div>
-    </header>
+          </NavbarItem>
+        ) : (
+          <NavbarItem>
+            <Link href="/auth/login">Login</Link>
+          </NavbarItem>
+        )}
+      </NavbarContent>
+    </NextUINavbar>
   )
 }
