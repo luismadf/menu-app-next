@@ -3,6 +3,8 @@
 import { removeMenuMutation } from '@/lib/api/menus/mutations'
 import { ActionsMenu, ConfirmationModal } from '../ui'
 import EditMenuForm from '../ui/menus/edit-menu-form'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import Link from 'next/link'
 
 export const columns = [
   {
@@ -18,6 +20,13 @@ export const columns = [
     cell: ({ row }) => (
       <ActionsMenu
         actions={[
+          {
+            component: (
+              <DropdownMenuItem>
+                <Link href={`menus/${row.original.id}`}>Generar Menú</Link>
+              </DropdownMenuItem>
+            )
+          },
           {
             component: <EditMenuForm menu={row.original} />
           },
