@@ -1,70 +1,47 @@
 'use client'
 
-import React from 'react'
-import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { useState } from 'react'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure
+} from '@nextui-org/react'
 
 export default function ConfirmationModal({
-  type = 'button',
-  buttonLabel = '',
+  Trigger,
   mutation = () => {},
   mutationPath = {},
   onSucess = () => {}
 }) {
-  const [open, setOpen] = useState(false)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   async function onClick() {
     await mutation(mutationPath)
-    setOpen(false)
+    onOpenChange()
     onSucess()
   }
 
   return (
     <>
-      {type === 'button' && (
-        <Button onClick={() => setOpen(true)}>{buttonLabel}</Button>
-      )}
-      {type === 'dropdown' && (
-        <DropdownMenuItem
-          onSelect={(e) => {
-            setOpen(true)
-            e.preventDefault()
-          }}
-        >
-          {buttonLabel}
-        </DropdownMenuItem>
-      )}
+      <Trigger onOpen={onOpen} />
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>¿Estas seguro?</DialogTitle>
-            <DialogDescription>
-              Al eliminar este item no podras volver a utilizarlo.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="sm:justify-start gap-2">
-            <Button type="button" variant="destructive" onClick={onClick}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          <ModalHeader>¿Estas seguro?</ModalHeader>
+          <ModalBody>
+            <p>Al eliminar este item no podras volver a utilizarlo.</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={onClick}>
               Eliminar
             </Button>
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Cerrar
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <Button onClick={onOpenChange}>Cerrar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }
