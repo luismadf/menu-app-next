@@ -1,28 +1,28 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  Input,
+  Select,
+  SelectItem
+} from '@nextui-org/react'
+
 import { addCategoryMutation } from '@/lib/api/categories/mutations'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { MultiSelect } from '..'
 import { useEffect } from 'react'
 import { getItems } from '@/lib/api/item/queries'
 
 export default function CreateCategoryForm() {
-  const [open, setOpen] = useState(false)
-  const [items, setItems] = useState([])
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { control, register, handleSubmit, reset } = useForm()
+  const [items, setItems] = useState([])
 
   useEffect(() => {
     const getItemsValues = async () => {
@@ -33,79 +33,65 @@ export default function CreateCategoryForm() {
     getItemsValues()
   }, [])
 
-  function onCloseDialog() {
-    setOpen(false)
-    reset()
-  }
-
   async function onSubmit(form) {
     await addCategoryMutation(form)
-    onCloseDialog()
+    onOpenChange()
+    reset()
   }
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Crear Categoría</Button>
+      <Button color="primary" onPress={onOpen}>
+        Crear Categoría
+      </Button>
 
-      <Dialog open={open} onOpenChange={onCloseDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Crear Categoría</DialogTitle>
-            <DialogDescription>
-              Aquí podras crear una nueva categoría, ¡Deja volar tu creatividad!
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 pt-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Nombre
-              </Label>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <ModalHeader>Crear Categoría</ModalHeader>
+            <ModalBody className="flex gap-4">
+              <p>
+                Aquí podras crear una nueva categoría, ¡Deja volar tu
+                creatividad!
+              </p>
               <Input
-                id="name"
-                className="col-span-3"
+                label="Nombre"
                 {...register('name', { required: 'El nombre es obligatorio' })}
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Descripción
-              </Label>
-              <Textarea
-                id="description"
-                className="col-span-3"
+              <Input
+                label="Descripción"
                 {...register('description', {
                   required: 'La descripción es obligatoria'
                 })}
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Items
-              </Label>
+
               <Controller
                 control={control}
                 name="items"
                 render={({ field: { onChange, value } }) => (
-                  <MultiSelect
-                    className="col-span-3"
-                    onChange={onChange}
-                    values={value}
-                    options={items}
-                    getOptions={(item) => ({
-                      label: item.name,
-                      value: item.id
-                    })}
-                  />
+                  <Select
+                    label="Articulos"
+                    selectionMode="multiple"
+                    selectedKeys={value}
+                    onSelectionChange={(selectedItemsSet) =>
+                      onChange(Array.from(selectedItemsSet))
+                    }
+                  >
+                    {items.map(({ id, name }) => (
+                      <SelectItem key={id}>{name}</SelectItem>
+                    ))}
+                  </Select>
                 )}
               />
-            </div>
-            <DialogFooter>
-              <Button type="submit">Crear Categoría</Button>
-            </DialogFooter>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" type="submit">
+                Crear Categoría
+              </Button>
+            </ModalFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ModalContent>
+      </Modal>
     </>
   )
 }
