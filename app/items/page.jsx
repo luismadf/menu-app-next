@@ -12,7 +12,7 @@ export default async function Page() {
         <CreateItemForm />
       </div>
 
-      <Table columns={columns} data={items} />
+      <Table columns={columns} items={items} />
     </div>
   )
 }

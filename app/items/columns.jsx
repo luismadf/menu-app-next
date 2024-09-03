@@ -1,55 +1,49 @@
 'use client'
 
 import { removeItemMutation } from '@/lib/api/item/mutations'
-import { ActionsMenu, ConfirmationModal } from '../ui'
+import { ConfirmationModal } from '../ui'
 import { revalidatePath } from 'next/cache'
 import { getItems } from '@/lib/api/item/queries'
+import { Tooltip } from '@nextui-org/react'
+import { DeleteIcon, formatToEUR } from '@/lib/utils'
+
+const Trigger = ({ onOpen }) => (
+  <div className="flex items-center">
+    <Tooltip color="danger" content="Eliminar">
+      <span className="text-lg text-danger cursor-pointer active:opacity-50">
+        <DeleteIcon onClick={onOpen} />
+      </span>
+    </Tooltip>
+  </div>
+)
 
 export const columns = [
   {
-    key: 'name',
-    header: 'Nombre del Artículo'
+    id: 'name',
+    name: 'Nombre del Artículo'
   },
   {
-    key: 'description',
-    header: 'Descripción'
+    id: 'description',
+    name: 'Descripción'
   },
   {
-    key: 'price',
-    header: () => <div className="text-right">Precio</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('price'))
-      const formatted = new Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'EUR'
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    }
+    id: 'price',
+    name: 'Precio',
+    render: ({ price }) => formatToEUR(price)
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      return (
-        <ActionsMenu
-          actions={[
-            {
-              component: (
-                <ConfirmationModal
-                  type="dropdown"
-                  buttonLabel="Eliminar"
-                  mutation={removeItemMutation}
-                  mutationPath={{ itemId: row.original._id }}
-                  onSuccess={async () => {
-                    revalidatePath('/items')
-                    await getItems()
-                  }}
-                />
-              )
-            }
-          ]}
-        />
-      )
-    }
+    name: 'Acciones',
+    render: ({ id }) => (
+      <ConfirmationModal
+        Trigger={Trigger}
+        mutation={removeItemMutation}
+        mutationPath={{ itemId: id }}
+        onSuccess={async () => {
+          revalidatePath('/items')
+          await getItems()
+        }}
+      />
+    )
   }
 ]
