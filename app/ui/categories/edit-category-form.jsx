@@ -1,34 +1,29 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  addCategoryMutation,
-  updateCategoryMutation
-} from '@/lib/api/categories/mutations'
-import { useState } from 'react'
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  Input,
+  Spinner,
+  Select,
+  SelectItem
+} from '@nextui-org/react'
+import { updateCategoryMutation } from '@/lib/api/categories/mutations'
+import { useState, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { MultiSelect } from '..'
-import { useEffect } from 'react'
 import { getItems } from '@/lib/api/item/queries'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
-export default function EditCategoryForm({ category }) {
-  const [open, setOpen] = useState(false)
-  const [items, setItems] = useState([])
-  const { control, register, handleSubmit, reset } = useForm({
+export default function EditCategoryForm({ Trigger, category }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { control, register, handleSubmit } = useForm({
     defaultValues: category
   })
+  const [items, setItems] = useState([])
 
   useEffect(() => {
     const getItemsValues = async () => {
@@ -39,86 +34,67 @@ export default function EditCategoryForm({ category }) {
     getItemsValues()
   }, [])
 
-  function onCloseDialog() {
-    setOpen(false)
-    reset()
-  }
-
   async function onSubmit(form) {
     await updateCategoryMutation({ categoryId: category.id, body: form })
-    onCloseDialog()
+    onOpenChange()
   }
 
   return (
     <>
-      <DropdownMenuItem
-        onSelect={(e) => {
-          setOpen(true)
-          e.preventDefault()
-        }}
-      >
-        Editar
-      </DropdownMenuItem>
+      <Trigger onOpen={onOpen} />
 
-      <Dialog open={open} onOpenChange={onCloseDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Editar Categoría</DialogTitle>
-            <DialogDescription>
-              Aquí podras editar tú categoría, ¡Deja volar tu creatividad!
-            </DialogDescription>
-          </DialogHeader>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {items.length > 0 ? (
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <ModalHeader>Editar Categoría</ModalHeader>
+              <ModalBody className="flex gap-4">
+                <p>
+                  Aquí podras editar tú categoría, ¡Deja volar tu creatividad!
+                </p>
+                <Input
+                  label="Nombre"
+                  {...register('name', {
+                    required: 'El nombre es obligatorio'
+                  })}
+                />
+                <Input
+                  label="Descripción"
+                  {...register('description', {
+                    required: 'La descripción es obligatoria'
+                  })}
+                />
 
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 pt-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Nombre
-              </Label>
-              <Input
-                id="name"
-                className="col-span-3"
-                {...register('name', { required: 'El nombre es obligatorio' })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Descripción
-              </Label>
-              <Textarea
-                id="description"
-                className="col-span-3"
-                {...register('description', {
-                  required: 'La descripción es obligatoria'
-                })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Items
-              </Label>
-              <Controller
-                control={control}
-                name="items"
-                render={({ field: { onChange, value } }) => (
-                  <MultiSelect
-                    className="col-span-3"
-                    onChange={onChange}
-                    values={value}
-                    options={items}
-                    getOptions={(item) => ({
-                      label: item.name,
-                      value: item.id
-                    })}
-                  />
-                )}
-              />
-            </div>
-            <DialogFooter>
-              <Button type="submit">Editar Categoría</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <Controller
+                  control={control}
+                  name="items"
+                  render={({ field: { onChange, value } }) => (
+                    <Select
+                      label="Articulos"
+                      selectionMode="multiple"
+                      selectedKeys={value}
+                      onSelectionChange={(selectedItemsSet) =>
+                        onChange(Array.from(selectedItemsSet))
+                      }
+                    >
+                      {items.map(({ id, name }) => (
+                        <SelectItem key={id}>{name}</SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" type="submit">
+                  Editar Categoría
+                </Button>
+              </ModalFooter>
+            </form>
+          ) : (
+            <Spinner />
+          )}
+        </ModalContent>
+      </Modal>
     </>
   )
 }
