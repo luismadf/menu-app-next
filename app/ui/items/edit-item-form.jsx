@@ -9,7 +9,8 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Input
+  Input,
+  Textarea
 } from '@nextui-org/react'
 import { useForm } from 'react-hook-form'
 
@@ -40,7 +41,7 @@ export default function EditItemForm({ Trigger, item }) {
                   required: 'El nombre es obligatorio'
                 })}
               />
-              <Input
+              <Textarea
                 label="Descripción"
                 {...register('description', {
                   required: 'La descripción es obligatoria'

@@ -11,7 +11,8 @@ import {
   Input,
   Spinner,
   Select,
-  SelectItem
+  SelectItem,
+  Textarea
 } from '@nextui-org/react'
 import { updateMenuMutation } from '@/lib/api/menus/mutations'
 import { useState, useEffect } from 'react'
@@ -56,13 +57,12 @@ export default function EditMenuForm({ Trigger, menu }) {
                     required: 'El nombre es obligatorio'
                   })}
                 />
-                <Input
+                <Textarea
                   label="Descripción"
                   {...register('description', {
                     required: 'La descripción es obligatoria'
                   })}
                 />
-
                 <Controller
                   control={control}
                   name="categories"

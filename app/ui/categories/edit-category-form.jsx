@@ -11,7 +11,8 @@ import {
   Input,
   Spinner,
   Select,
-  SelectItem
+  SelectItem,
+  Textarea
 } from '@nextui-org/react'
 import { updateCategoryMutation } from '@/lib/api/categories/mutations'
 import { useState, useEffect } from 'react'
@@ -58,13 +59,12 @@ export default function EditCategoryForm({ Trigger, category }) {
                     required: 'El nombre es obligatorio'
                   })}
                 />
-                <Input
+                <Textarea
                   label="Descripción"
                   {...register('description', {
                     required: 'La descripción es obligatoria'
                   })}
                 />
-
                 <Controller
                   control={control}
                   name="items"

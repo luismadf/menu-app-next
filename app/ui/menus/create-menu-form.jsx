@@ -10,7 +10,8 @@ import {
   useDisclosure,
   Input,
   Select,
-  SelectItem
+  SelectItem,
+  Textarea
 } from '@nextui-org/react'
 
 import { addMenuMutation } from '@/lib/api/menus/mutations'
@@ -57,13 +58,12 @@ export default function CreateMenuForm() {
                 label="Nombre"
                 {...register('name', { required: 'El nombre es obligatorio' })}
               />
-              <Input
+              <Textarea
                 label="Descripción"
                 {...register('description', {
                   required: 'La descripción es obligatoria'
                 })}
               />
-
               <Controller
                 control={control}
                 name="categories"
