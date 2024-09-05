@@ -1,5 +1,6 @@
 'use client'
 
+import { updateItemMutation } from '@/lib/api/item/mutations'
 import {
   Modal,
   ModalContent,
@@ -10,36 +11,34 @@ import {
   useDisclosure,
   Input
 } from '@nextui-org/react'
-import { addItemMutation } from '@/lib/api/item/mutations'
 import { useForm } from 'react-hook-form'
 
-export default function CreateItemForm() {
+export default function EditItemForm({ Trigger, item }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const { register, handleSubmit, reset } = useForm()
+  const { register, handleSubmit } = useForm({
+    defaultValues: item
+  })
 
   async function onSubmit(form) {
-    await addItemMutation(form)
+    await updateItemMutation({ itemId: item.id, body: form })
     onOpenChange()
-    reset()
   }
 
   return (
     <>
-      <Button color="primary" onPress={onOpen}>
-        Crear Artículo
-      </Button>
+      <Trigger onOpen={onOpen} />
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalHeader>Crear Artículo</ModalHeader>
+            <ModalHeader>Editar Artículo</ModalHeader>
             <ModalBody className="flex gap-4">
-              <p>
-                Aquí podras crear un nuevo artículo, ¡Deja volar tu creatividad!
-              </p>
+              <p>Aquí podras editar tú artículo, ¡Deja volar tu creatividad!</p>
               <Input
                 label="Nombre"
-                {...register('name', { required: 'El nombre es obligatorio' })}
+                {...register('name', {
+                  required: 'El nombre es obligatorio'
+                })}
               />
               <Input
                 label="Descripción"
@@ -56,7 +55,7 @@ export default function CreateItemForm() {
             </ModalBody>
             <ModalFooter>
               <Button color="primary" type="submit">
-                Crear Artículo
+                Editar Categoría
               </Button>
             </ModalFooter>
           </form>
