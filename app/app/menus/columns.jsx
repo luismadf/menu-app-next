@@ -1,12 +1,11 @@
 'use client'
 
-import { removeItemMutation } from '@/lib/api/item/mutations'
-import { ConfirmationModal } from '../ui'
-import { revalidatePath } from 'next/cache'
-import { getItems } from '@/lib/api/item/queries'
+import { ConfirmationModal } from '../../ui'
+import { removeMenuMutation } from '@/lib/api/menus/mutations'
+import EditMenuForm from '../../ui/menus/edit-menu-form'
 import { Tooltip } from '@nextui-org/react'
-import { DeleteIcon, EditIcon, formatToEUR } from '@/lib/utils'
-import EditItemForm from '../ui/items/edit-item-form'
+import { DeleteIcon, EditIcon, EyeIcon } from '@/lib/utils'
+import Link from 'next/link'
 
 const Trigger = ({ onOpen }) => (
   <div className="flex items-center">
@@ -38,26 +37,29 @@ export const columns = [
     name: 'Descripción'
   },
   {
-    id: 'price',
-    name: 'Precio',
-    render: ({ price }) => formatToEUR(price)
-  },
-  {
     id: 'actions',
     name: 'Acciones',
     render: (row) => (
       <div className="flex gap-2 justify-center">
         <ConfirmationModal
           Trigger={Trigger}
-          mutation={removeItemMutation}
-          mutationPath={{ itemId: row.id }}
+          mutation={removeMenuMutation}
+          mutationPath={{ menuId: row.id }}
           onSuccess={async () => {
-            revalidatePath('/items')
+            revalidatePath('/menus')
             await getItems()
           }}
         />
 
-        <EditItemForm Trigger={EditTrigger} item={row} />
+        <EditMenuForm Trigger={EditTrigger} menu={row} />
+
+        <Tooltip content="Generar Menú">
+          <Link href={`menus/${row.id}`}>
+            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <EyeIcon />
+            </span>
+          </Link>
+        </Tooltip>
       </div>
     )
   }

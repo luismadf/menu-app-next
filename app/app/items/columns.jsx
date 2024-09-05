@@ -1,10 +1,12 @@
 'use client'
 
-import { ConfirmationModal } from '../ui'
-import { removeCategoryMutation } from '@/lib/api/categories/mutations'
+import { removeItemMutation } from '@/lib/api/item/mutations'
+import { ConfirmationModal } from '../../ui'
+import { revalidatePath } from 'next/cache'
+import { getItems } from '@/lib/api/item/queries'
 import { Tooltip } from '@nextui-org/react'
-import { DeleteIcon, EditIcon } from '@/lib/utils'
-import EditCategoryForm from '../ui/categories/edit-category-form'
+import { DeleteIcon, EditIcon, formatToEUR } from '@/lib/utils'
+import EditItemForm from '../../ui/items/edit-item-form'
 
 const Trigger = ({ onOpen }) => (
   <div className="flex items-center">
@@ -36,21 +38,26 @@ export const columns = [
     name: 'Descripción'
   },
   {
+    id: 'price',
+    name: 'Precio',
+    render: ({ price }) => formatToEUR(price)
+  },
+  {
     id: 'actions',
     name: 'Acciones',
     render: (row) => (
       <div className="flex gap-2 justify-center">
         <ConfirmationModal
           Trigger={Trigger}
-          mutation={removeCategoryMutation}
-          mutationPath={{ categoryId: row.id }}
+          mutation={removeItemMutation}
+          mutationPath={{ itemId: row.id }}
           onSuccess={async () => {
-            revalidatePath('/categories')
+            revalidatePath('/items')
             await getItems()
           }}
         />
 
-        <EditCategoryForm Trigger={EditTrigger} category={row} />
+        <EditItemForm Trigger={EditTrigger} item={row} />
       </div>
     )
   }

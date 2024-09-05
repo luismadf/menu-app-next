@@ -1,6 +1,6 @@
-import CreateCategoryForm from '../ui/categories/create-category-form'
+import CreateCategoryForm from '../../ui/categories/create-category-form'
 import { getCategories } from '@/lib/api/categories/queries'
-import { Table } from '../ui/table'
+import { Table } from '../../ui/table'
 import { columns } from './columns'
 
 export default async function Page() {

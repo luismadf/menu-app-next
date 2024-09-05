@@ -1,11 +1,10 @@
 'use client'
 
-import { ConfirmationModal } from '../ui'
-import { removeMenuMutation } from '@/lib/api/menus/mutations'
-import EditMenuForm from '../ui/menus/edit-menu-form'
+import { ConfirmationModal } from '../../ui'
+import { removeCategoryMutation } from '@/lib/api/categories/mutations'
 import { Tooltip } from '@nextui-org/react'
-import { DeleteIcon, EditIcon, EyeIcon } from '@/lib/utils'
-import Link from 'next/link'
+import { DeleteIcon, EditIcon } from '@/lib/utils'
+import EditCategoryForm from '../../ui/categories/edit-category-form'
 
 const Trigger = ({ onOpen }) => (
   <div className="flex items-center">
@@ -43,23 +42,15 @@ export const columns = [
       <div className="flex gap-2 justify-center">
         <ConfirmationModal
           Trigger={Trigger}
-          mutation={removeMenuMutation}
-          mutationPath={{ menuId: row.id }}
+          mutation={removeCategoryMutation}
+          mutationPath={{ categoryId: row.id }}
           onSuccess={async () => {
-            revalidatePath('/menus')
+            revalidatePath('/categories')
             await getItems()
           }}
         />
 
-        <EditMenuForm Trigger={EditTrigger} menu={row} />
-
-        <Tooltip content="Generar Menú">
-          <Link href={`menus/${row.id}`}>
-            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-              <EyeIcon />
-            </span>
-          </Link>
-        </Tooltip>
+        <EditCategoryForm Trigger={EditTrigger} category={row} />
       </div>
     )
   }

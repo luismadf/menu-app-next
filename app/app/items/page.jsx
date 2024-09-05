@@ -1,15 +1,15 @@
-import { getMenus } from '@/lib/api/menus/queries'
-import { Table } from '../ui/table'
+import { getItems } from '@/lib/api/item/queries'
+import { Table } from '../../ui/table'
 import { columns } from './columns'
-import CreateMenuForm from '../ui/menus/create-menu-form'
+import CreateItemForm from '../../ui/items/create-item-form'
 
 export default async function Page() {
-  const items = await getMenus()
+  const items = await getItems()
 
   return (
     <div className="mx-auto py-10">
       <div className="mb-8">
-        <CreateMenuForm />
+        <CreateItemForm />
       </div>
 
       <Table columns={columns} items={items} />
