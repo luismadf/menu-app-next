@@ -42,7 +42,7 @@ export default function CreateMenuForm() {
 
   return (
     <>
-      <Button color="primary" onPress={onOpen}>
+      <Button color="primary" radius="full" onPress={onOpen}>
         Crear Menú
       </Button>
 
