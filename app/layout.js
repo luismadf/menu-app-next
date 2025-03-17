@@ -3,6 +3,7 @@ import './globals.css'
 import { Navbar } from './ui'
 import { auth } from '@/auth'
 import { Providers } from './providers'
+import { dbConnect } from '@/lib/mongodb'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -12,14 +13,15 @@ export const metadata = {
 }
 
 export default async function RootLayout({ children }) {
+  await dbConnect()
   const session = await auth()
 
   return (
     <html lang="es">
-      <body className={inter.className}>
+      <body className={`${inter.className} container`}>
         <Providers>
           <Navbar session={session} />
-          <main className="container">{children}</main>
+          <main className="mt-24">{children}</main>
         </Providers>
       </body>
     </html>

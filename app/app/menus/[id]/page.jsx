@@ -12,20 +12,50 @@ import {
 import { useState } from 'react'
 import { useEffect } from 'react'
 
-const styles = StyleSheet.create({
-  page: {
-    // flexDirection: 'row',
-    backgroundColor: '#E4E4E4'
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1
-  }
-})
+// const styles = StyleSheet.create({
+//   page: {
+//     // flexDirection: 'row',
+//     backgroundColor: '#E4E4E4'
+//   },
+//   section: {
+//     margin: 10,
+//     padding: 10,
+//     flexGrow: 1
+//   }
+// })
 
 export default function Page({ params }) {
   const [menu, setMenu] = useState()
+
+  const styles = StyleSheet.create({
+    page: {
+      padding: 30,
+      fontSize: 12
+    },
+    section: {
+      marginBottom: 20
+    },
+    title: {
+      fontSize: 24,
+      marginBottom: 10,
+      textAlign: 'center'
+    },
+    item: {
+      marginBottom: 10
+    },
+    itemTitle: {
+      fontSize: 18,
+      fontWeight: 'bold'
+    },
+    itemDescription: {
+      fontSize: 12,
+      color: '#666'
+    },
+    itemPrice: {
+      fontSize: 14,
+      marginTop: 4
+    }
+  })
 
   useEffect(() => {
     async function getMenuInfo() {
